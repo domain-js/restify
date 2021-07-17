@@ -8,6 +8,11 @@ module.exports = {
     node: true,
     jest: true,
   },
+  settings: {
+    react: {
+      version: "999.999.999",
+    },
+  },
   rules: {
     "nonblock-statement-body-position": "off",
     "operator-linebreak": ["error", "after"],

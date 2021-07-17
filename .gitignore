@@ -1,5 +1,7 @@
 storage/
 tmp/
+node_modules
+coverage
 package-lock.json
 ./test.js
 src/consts.js

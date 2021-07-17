@@ -1,3 +1,6 @@
+const os = require("os");
+const fs = require("fs");
+const crypto = require("crypto");
 const _ = require("lodash");
 const xlsx = require("xlsx");
 const csvstringify = require("csv-stringify");
@@ -53,31 +56,31 @@ const utils = {
       requestId: req.id(),
     };
 
-    const token = req.header("x-auth-token") || req.query.access_token || req.query.accessToken;
+    const token = req.headers["x-auth-token"] || req.query.access_token || req.query.accessToken;
 
     // token 和签名认证只能二选一
     if (token) {
       obj.token = token;
     } else {
       // 处理签名认证的方式
-      const signature = req.header("x-auth-signature");
+      const signature = req.headers["x-auth-signature"];
       if (signature) {
         obj.sign = {
           signature,
           uri: req.url,
-          key: req.header("x-auth-key"),
-          timestamp: req.header("x-auth-timestamp") | 0,
-          signMethod: req.header("x-auth-sign-method"),
-          signVersion: req.header("x-auth-sign-version"),
+          key: req.headers["x-auth-key"],
+          timestamp: req.headers["x-auth-timestamp"] | 0,
+          signMethod: req.headers["x-auth-sign-method"],
+          signVersion: req.headers["x-auth-sign-version"],
           method,
         };
       }
     }
 
     // 客户端发布号
-    obj.revision = req.header("x-auth-revision");
+    obj.revision = req.headers["x-auth-revision"];
     // 用户uuid 可以长期跨app
-    obj.uuid = req.header("x-auth-uuid");
+    obj.uuid = req.headers["x-auth-uuid"];
 
     return Object.freeze(obj);
   },

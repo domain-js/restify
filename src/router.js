@@ -2,9 +2,6 @@
  * 对接 domain 和 restify 以http的方式对外提供服务
  */
 
-const os = require("os");
-const crypto = require("crypto");
-const fs = require("fs");
 const _ = require("lodash");
 const errors = require("restify-errors");
 const utils = require("./utils");
@@ -94,6 +91,7 @@ function Main(server, domain, httpCodes) {
         const profile = makeProfile(req, methodPath);
         const params = makeParams(req);
 
+        // 额外处理 params
         if (handler) handler(params);
 
         try {
@@ -170,7 +168,7 @@ function Main(server, domain, httpCodes) {
 
     router.resource = (res, routePath = `/${res}s`) => {
       router.collection(res, routePath);
-      router.model(res, `${routePath}/:${res}Id`);
+      router.model(res, `${routePath}/:id`);
     };
 
     return router;
