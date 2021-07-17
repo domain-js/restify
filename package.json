@@ -1,7 +1,7 @@
 {
-  "name": "@domain.js/restify",
+  "name": "@domain.js/router",
   "version": "0.1.0",
-  "description": "Bridge domain methods to restify http server",
+  "description": "Router for bridge domain methods to restify http server",
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
