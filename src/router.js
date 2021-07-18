@@ -41,7 +41,7 @@ function Main(server, domain, httpCodes) {
 
     /** 判断是否需要提供apis的查询接口 */
     if (apisRoute) {
-      server.get(apisRoute, (req, res, next) => {
+      server.get(`/${apisRoute}`, (req, res, next) => {
         if (req.query._format === "html") {
           res.sendRaw(200, apisHTML, {
             "Content-Type": "text/html; charset=utf-8",
@@ -52,7 +52,7 @@ function Main(server, domain, httpCodes) {
         next();
       });
 
-      server.get(`${apisRoute}/_schema`, (req, res, next) => {
+      server.get(`/${apisRoute}/_schema`, (req, res, next) => {
         const { path } = req.query;
 
         try {
@@ -174,7 +174,7 @@ function Main(server, domain, httpCodes) {
     return router;
   }
 
-  return Router(server, domain, "/apis");
+  return Router(server, domain, "apis");
 }
 
 module.exports = Main;
