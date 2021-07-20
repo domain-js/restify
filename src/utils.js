@@ -53,6 +53,7 @@ const utils = {
       remoteIp: utils.remoteIp(req),
       realIp: utils.realIp(req),
       userAgent: req.userAgent(),
+      startedAt: new Date(),
       requestId: req.id(),
     };
 

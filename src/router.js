@@ -94,8 +94,11 @@ function Main(server, domain, httpCodes) {
         // 额外处理 params
         if (handler) handler(params);
 
+        res.header("X-RequestID", profile.requestId);
+
         try {
           let results = await method(profile, params);
+          res.header("X-ConsumedTime", Date.now() - profile.startedAt);
           if (results == null) results = "Ok";
           if (resHandler) {
             resHandler(results, res);
@@ -121,6 +124,7 @@ function Main(server, domain, httpCodes) {
             res.send(code, code !== 204 && results);
           }
         } catch (e) {
+          res.header("X-ConsumedTime", Date.now() - profile.startedAt);
           next(error2httpError(e));
           return;
         }

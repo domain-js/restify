@@ -69,7 +69,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.home.index.mock.calls.length).toBe(1);
-      expect(domain.home.index.mock.calls.pop()).toEqual([
+      expect(domain.home.index.mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -104,7 +104,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.home[methodPath].mock.calls.length).toBe(1);
-      expect(domain.home[methodPath].mock.calls.pop()).toEqual([
+      expect(domain.home[methodPath].mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -143,7 +143,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.user[methodPath].mock.calls.length).toBe(1);
-      expect(domain.user[methodPath].mock.calls.pop()).toEqual([
+      expect(domain.user[methodPath].mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -182,7 +182,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.user[methodPath].mock.calls.length).toBe(1);
-      expect(domain.user[methodPath].mock.calls.pop()).toEqual([
+      expect(domain.user[methodPath].mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -226,7 +226,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.user[methodPath].mock.calls.length).toBe(1);
-      expect(domain.user[methodPath].mock.calls.pop()).toEqual([
+      expect(domain.user[methodPath].mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -272,7 +272,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.user[methodPath].mock.calls.length).toBe(1);
-      expect(domain.user[methodPath].mock.calls.pop()).toEqual([
+      expect(domain.user[methodPath].mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -324,7 +324,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.user[methodPath].mock.calls.length).toBe(1);
-      expect(domain.user[methodPath].mock.calls.pop()).toEqual([
+      expect(domain.user[methodPath].mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -359,7 +359,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.user.detail.mock.calls.length).toBe(1);
-      expect(domain.user.detail.mock.calls.pop()).toEqual([
+      expect(domain.user.detail.mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -386,7 +386,7 @@ describe("router", () => {
       expect(next.mock.calls.length).toBe(1);
       expect(next.mock.calls.pop()).toEqual([]);
       expect(domain.user.list.mock.calls.length).toBe(1);
-      expect(domain.user.list.mock.calls.pop()).toEqual([
+      expect(domain.user.list.mock.calls.pop()).toMatchObject([
         {
           clientIp: "x-forwarded-for-ip",
           realIp: undefined,
@@ -428,7 +428,7 @@ describe("router", () => {
     expect(next.mock.calls.length).toBe(1);
     expect(next.mock.calls.pop()).toEqual([]);
     expect(domain.home.index.mock.calls.length).toBe(1);
-    expect(domain.home.index.mock.calls.pop()).toEqual([
+    expect(domain.home.index.mock.calls.pop()).toMatchObject([
       {
         clientIp: "x-forwarded-for-ip",
         realIp: undefined,
