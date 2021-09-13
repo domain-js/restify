@@ -47,7 +47,7 @@ const utils = {
   /**
    * 构造profile参数
    */
-  makeProfile(req, method) {
+  makeProfile(req, method, customFn) {
     const obj = {
       clientIp: utils.clientIp(req),
       remoteIp: utils.remoteIp(req),
@@ -77,6 +77,8 @@ const utils = {
         };
       }
     }
+
+    if (customFn) customFn(obj, req);
 
     // 客户端发布号
     obj.revision = req.headers["x-auth-revision"];
@@ -143,6 +145,44 @@ const utils = {
     }
 
     return true;
+  },
+
+  jsonSchema2Swagger(schema, verb, methodPath, swaggerDocJson) {
+    if (verb === "post" || verb === "put" || verb === "patch") {
+      swaggerDocJson.definitions[methodPath] = schema;
+      return [
+        {
+          name: "body",
+          in: "body",
+          require: true,
+          description: schema.description,
+          operationId: methodPath,
+          schema: {
+            $ref: `#/definitions/${methodPath}`,
+          },
+        },
+      ];
+    }
+    const parameters = [];
+    if (!hasOwnProperty.call(schema, "properties")) {
+      return parameters;
+    }
+
+    const requireds = schema.required ? schema.required : [];
+    for (const prop of Object.keys(schema.properties)) {
+      const val = schema.properties[prop];
+      const param = {
+        name: prop,
+        in: "query",
+        ...val,
+      };
+
+      if (requireds.includes("prop")) {
+        param.required = true;
+      }
+      parameters.push(param);
+    }
+    return parameters;
   },
 };
 

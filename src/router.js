@@ -4,10 +4,11 @@
 
 const _ = require("lodash");
 const errors = require("restify-errors");
+const swaggerUi = require("swagger-ui-restify");
 const utils = require("./utils");
 
-function Main(server, domain, httpCodes) {
-  const { ucwords, makeProfile, makeParams, outputCSV } = utils;
+function Main(server, domain, httpCodes, customFn) {
+  const { ucwords, makeProfile, makeParams, outputCSV, jsonSchema2Swagger } = utils;
 
   // 改写 HttpErrorToJSON 处理 data
   const HttpErrorToJSON = errors.HttpError.prototype.toJSON;
@@ -35,9 +36,23 @@ function Main(server, domain, httpCodes) {
    *  domain 领域方法
    *  apisRoute 所有api地址查看
    */
-  function Router(server, domain, apisRoute) {
+  function Router(server, domain, apisRoute, swagger = []) {
+    const [apiSwagger, swaggerDocJson] = swagger;
     const apis = [];
     let apisHTML = "<h3>API 目录，点击可以查看参数格式定义</h3>";
+
+    let swaggerHtml = "";
+    if (apiSwagger) {
+      server.get(`${apiSwagger}/*.*`, ...swaggerUi.serve);
+      server.get(`${apiSwagger}`, (req, res) => {
+        res.writeHead(200, {
+          "Content-Length": Buffer.byteLength(swaggerHtml),
+          "Content-Type": "text/html",
+        });
+        res.write(swaggerHtml);
+        res.end();
+      });
+    }
 
     /** 判断是否需要提供apis的查询接口 */
     if (apisRoute) {
@@ -65,6 +80,46 @@ function Main(server, domain, httpCodes) {
       });
     }
 
+    const getAPISchemaDoc = (verb, route, methodPath) => {
+      if (!apiSwagger) return;
+      let apiSchema = [];
+      let desc = "";
+      try {
+        apiSchema = domain._getSchemaByPath(methodPath);
+        desc = apiSchema[1] ? apiSchema[1].description : "unknow";
+        apiSchema = jsonSchema2Swagger(
+          apiSchema[1] ? apiSchema[1] : {},
+          verb,
+          methodPath,
+          swaggerDocJson,
+        );
+      } catch (e) {
+        console.log(methodPath, "schema to swagger error.");
+      }
+
+      swaggerHtml = swaggerUi.generateHTML(swaggerDocJson, {
+        baseURL: `${swaggerDocJson.basePath}${apiSwagger}`,
+        explorer: true,
+      });
+
+      const apiTag = methodPath.split(".")[0];
+
+      swaggerDocJson.paths[route] = {
+        [verb]: {
+          "x-swagger-router-controller": methodPath,
+          operationId: methodPath,
+          tags: [apiTag],
+          externalDocs: {
+            description: "查看接口参数 json schema 定义",
+            url: `./${apisRoute}/_schema?path=${methodPath}`,
+          },
+          description: desc,
+          parameters: apiSchema || [],
+          responses: {},
+        },
+      };
+    };
+
     const register = (
       verb,
       route,
@@ -87,8 +142,10 @@ function Main(server, domain, httpCodes) {
         throw Error(`Missing domain method: ${methodPath}`);
       }
 
+      getAPISchemaDoc(verb, route, methodPath);
+
       server[verb](route, async (req, res, next) => {
-        const profile = makeProfile(req, methodPath);
+        const profile = makeProfile(req, methodPath, customFn);
         const params = makeParams(req);
 
         // 额外处理 params
@@ -157,7 +214,7 @@ function Main(server, domain, httpCodes) {
       }
       if (controller) {
         register("get", routePath, `${controller}.${res}s`, 200, true);
-        register("post", routePath, `${controller}.add${utils.ucwords(res)}`, 201);
+        register("post", routePath, `${controller}.add${ucwords(res)}`, 201);
       } else {
         register("get", routePath, `${res}.list`, 200, true);
         register("post", routePath, `${res}.add`, 201);
