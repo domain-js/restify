@@ -71,8 +71,9 @@ function Main(server, httpCodes, customFn) {
         const { path } = req.query;
 
         try {
-          const [, schema] = domain._getSchemaByPath(path);
-          res.send(schema);
+          const { all } = req.query;
+          const schema = domain._getSchemaByPath(path);
+          res.send(all === undefined ? schema[1] : schema);
         } catch (e) {
           next(error2httpError(e));
           return;
