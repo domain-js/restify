@@ -46,7 +46,7 @@ const res = {
 const next = jest.fn();
 
 describe("router", () => {
-  const router = Router(server, domain);
+  const router = Router(server)(domain);
   server.get.mock.calls.length = 0;
 
   for (const verb of ["get", "post", "put", "del"]) {

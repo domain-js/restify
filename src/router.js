@@ -7,7 +7,7 @@ const errors = require("restify-errors");
 const swaggerUi = require("swagger-ui-restify");
 const utils = require("./utils");
 
-function Main(server, domain, httpCodes, customFn) {
+function Main(server, httpCodes, customFn) {
   const { ucwords, makeProfile, makeParams, outputCSV, jsonSchema2Swagger } = utils;
 
   // 改写 HttpErrorToJSON 处理 data
@@ -36,15 +36,15 @@ function Main(server, domain, httpCodes, customFn) {
    *  domain 领域方法
    *  apisRoute 所有api地址查看
    */
-  function Router(server, domain, apisRoute, swagger = []) {
+  function Router(domain, apisRoute, swagger = []) {
     const [apiSwagger, swaggerDocJson] = swagger;
     const apis = [];
     let apisHTML = "<h3>API 目录，点击可以查看参数格式定义</h3>";
 
     let swaggerHtml = "";
     if (apiSwagger) {
-      server.get(`${apiSwagger}/*.*`, ...swaggerUi.serve);
-      server.get(`${apiSwagger}`, (req, res) => {
+      server.get(`/${apiSwagger}/*.*`, ...swaggerUi.serve);
+      server.get(`/${apiSwagger}`, (req, res) => {
         res.writeHead(200, {
           "Content-Length": Buffer.byteLength(swaggerHtml),
           "Content-Type": "text/html",
@@ -71,7 +71,8 @@ function Main(server, domain, httpCodes, customFn) {
         const { path } = req.query;
 
         try {
-          res.send(domain._getSchemaByPath(path));
+          const [, schema] = domain._getSchemaByPath(path);
+          res.send(schema);
         } catch (e) {
           next(error2httpError(e));
           return;
@@ -235,7 +236,7 @@ function Main(server, domain, httpCodes, customFn) {
     return router;
   }
 
-  return Router(server, domain, "apis");
+  return Router;
 }
 
 module.exports = Main;
