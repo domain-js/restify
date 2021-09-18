@@ -226,6 +226,7 @@ function Main(server, httpCodes, customFn) {
     router.model = (res, routePath = `/${res}s/:id`) => {
       register("get", routePath, `${res}.detail`);
       register("put", routePath, `${res}.modify`);
+      register("patch", routePath, `${res}.modify`);
       register("del", routePath, `${res}.remove`, 204);
     };
 
