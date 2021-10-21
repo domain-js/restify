@@ -132,16 +132,23 @@ const utils = {
       ]);
       xlsx.utils.book_append_sheet(workBook, workSheet);
       xlsx.writeFile(workBook, file, { bookType: "xlsx", type: "binary" });
-      const stream = fs.createReadStream(file);
-      stream.pipe(res);
-      stream.on("end", () => {
-        fs.unlinkSync(file);
+      await new Promise((resolve) => {
+        const stream = fs.createReadStream(file);
+        stream.pipe(res);
+        stream.on("end", () => {
+          resolve();
+          fs.unlinkSync(file);
+        });
       });
     } else {
-      csvstringify(rows, {
-        header: true,
-        columns: _.zipObject(keys, titles),
-      }).pipe(res);
+      await new Promise((resolve) => {
+        const stream = csvstringify(rows, {
+          header: true,
+          columns: _.zipObject(keys, titles),
+        });
+        stream.pipe(res);
+        stream.on("end", resolve);
+      });
     }
 
     return true;

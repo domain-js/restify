@@ -169,7 +169,7 @@ function Main(server, httpCodes, customFn) {
             let ok = false;
             if (_format === "csv" || _format === "xlsx") {
               // 导出csv
-              ok = outputCSV(results.rows, params, res, _format === "xlsx");
+              ok = await outputCSV(results.rows, params, res, _format === "xlsx");
             }
 
             if (!ok) res.send(code, results.rows);

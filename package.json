@@ -1,6 +1,6 @@
 {
   "name": "@domain.js/router",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Router for bridge domain methods to restify http server",
   "main": "index.js",
   "scripts": {
