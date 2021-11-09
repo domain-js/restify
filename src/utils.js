@@ -104,7 +104,7 @@ const utils = {
       if (params[k] && _.isString(params[k])) params[k] = params[k].split(",");
     }
 
-    if (req.files) params.__files = req.files;
+    if (_.size(req.files)) params.__files = req.files;
     return params;
   },
 
